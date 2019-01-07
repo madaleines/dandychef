@@ -9,6 +9,7 @@ const config = {
   storageBucket: "dandychef-mvs.appspot.com",
   messagingSenderId: "750730964442"
 };
+
 firebase.initializeApp(config);
 
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
