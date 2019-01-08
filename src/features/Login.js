@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
 
 import { loginWithGoogle } from '../helpers/auth';
 import { firebaseAuth } from '../config/constants';
