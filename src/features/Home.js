@@ -11,26 +11,39 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    const allPhotos = [
-      {
-        id: 'randomstringimadeup43454356546',
-        url: 'http://fillmurray.com/200/200'
-      },
-      {
-        id: 'randomstringimadeup43523526534565',
-        url: 'http://fillmurray.com/200/200'
-      },
-      {
-        id: 'randomstringimadeup433245234534',
-        url: 'http://fillmurray.com/200/200'
-      }
-    ]
-
     this.state = {
-      allPhotos
+      allPhotos: []
     };
 
     this.handleLogout = this.handleLogout.bind(this);
+    this.getInitial = this.getInitial.bind(this);
+  }
+
+
+  componentDidMount() {
+    this.getInitial();
+  }
+
+
+  getInitial() {
+    firebase.auth().onAuthStateChanged(user => {
+
+      if (user) {
+
+        firebase.firestore().collection('photos').onSnapshot(snapshot => {
+          let allPhotos = [];
+          snapshot.forEach(doc => {
+            var newItem = doc.data();
+            newItem.id = doc.id;
+            allPhotos.push(newItem);
+          });
+
+          this.setState({ allPhotos });
+        });
+
+      }
+
+    });
 
   }
 
@@ -65,7 +78,8 @@ export default class Home extends Component {
       }
       console.log('newPhoto', newPhoto);
 
-      await firebase.firestore().collection('photos').add(newPhoto);
+      let photoAdded = await firebase.firestore().collection('photos').add(newPhoto);
+      console.log('photoAdded', photoAdded);
     }
 
     catch(err) {
@@ -83,45 +97,45 @@ export default class Home extends Component {
 
       return (
         <div key={photo.id}>
-        <div style={{minHeight: '215px'}}>
-        <i className="bottom-icon material-icons main-close">close</i>
-        <Image style={{ width: '100%' }} src={photo.url} responsive />
-        </div>
+          <div style={{minHeight: '215px'}}>
+            <i className="bottom-icon material-icons main-close">close</i>
+            <Image style={{ width: '100%' }} src={photo.url} responsive />
+          </div>
         </div>
       );
     })
 
     return (
       <div>
-      {allImages}
+        {allImages}
 
-      <Grid className="bottom-nav">
-      <Row className="show-grid">
-      <Col xs={4} className="col-bottom">
-      <Link to="/app/album"><i className="bottom-icon material-icons">collections</i></Link>
-      </Col>
-      <Col xs={4} className="col-bottom">
+        <Grid className="bottom-nav">
+          <Row className="show-grid">
+            <Col xs={4} className="col-bottom">
+              <Link to="/app/album"><i className="bottom-icon material-icons">collections</i></Link>
+            </Col>
+            <Col xs={4} className="col-bottom">
 
-      <label>
-      <i className="bottom-icon material-icons">camera_alt</i>
-      <FileUploader
-      hidden
-      accept="image/*"
-      storageRef={firebase.storage().ref('images')}
-      onUploadStart={this.handleUploadStart}
-      onUploadError={this.handleUploadError}
-      onUploadSuccess={this.handleUploadSuccess}
-      onProgress={this.handleProgress}
-      />
-      </label>
+              <label>
+                <i className="bottom-icon material-icons">camera_alt</i>
+                <FileUploader
+                  hidden
+                  accept="image/*"
+                  storageRef={firebase.storage().ref('images')}
+                  onUploadStart={this.handleUploadStart}
+                  onUploadError={this.handleUploadError}
+                  onUploadSuccess={this.handleUploadSuccess}
+                  onProgress={this.handleProgress}
+                  />
+              </label>
 
 
-      </Col>
-      <Col onClick={this.handleLogout} xs={4} className="col-bottom">
-      <i className="bottom-icon material-icons">assignment_return</i>
-      </Col>
-      </Row>
-      </Grid>
+            </Col>
+            <Col onClick={this.handleLogout} xs={4} className="col-bottom">
+              <i className="bottom-icon material-icons">assignment_return</i>
+            </Col>
+          </Row>
+        </Grid>
 
       </div>
     );
