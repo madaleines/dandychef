@@ -1,0 +1,7 @@
+{
+"RESULT_TOPIC": "result_name",
+"RESULT_BUCKET": "dandychef_text_bucket",
+"TRANSLATE_TOPIC": "dandychef_translate",
+"TRANSLATE": true,
+"TO_LANG": ["en", "fr", "es", "ja", "ru"]
+}

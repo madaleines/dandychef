@@ -41,7 +41,7 @@ export default class Home extends Component {
   }
 
   async handleRemove(id) {
-    console.log('photo id', id)
+    // console.log('photo id', id)
     await firebase.firestore().collection('photos').doc(id).delete();
     this.getInitial();
   }
@@ -54,12 +54,12 @@ export default class Home extends Component {
 
   getInitial() {
     firebase.auth().onAuthStateChanged(user => {
-      console.log(user.uid)
+      // console.log(user.uid)
       let userId = user.uid;
       let imageRef = `images/${userId}`;
 
       this.setState({ imageRef });
-      console.log(this.state)
+      // console.log(this.state)
       if (user) {
 
         firebase.firestore().collection('photos').where('userId', '==', user.uid).onSnapshot(snapshot => {
@@ -70,7 +70,7 @@ export default class Home extends Component {
             allPhotos.push(newItem);
           });
 
-          console.log('allPhotos', allPhotos);
+          // console.log('allPhotos', allPhotos);
 
           this.setState({ allPhotos });
         });
@@ -84,20 +84,20 @@ export default class Home extends Component {
     .then(() => {
       localStorage.removeItem(appTokenKey);
       this.props.history.push("/login");
-      console.log("user signed out from firebase");
+      // console.log("user signed out from firebase");
     });
   }
 
   async handleUploadSuccess (filename) {
-    console.log(filename)
+    // console.log(filename)
     const x = this
-    console.log(x)
+    // console.log(x)
     try {
       let { bucket, fullPath } = await firebase.storage().ref(x.state.imageRef).child(filename).getMetadata();
-      console.log('bucket', bucket)
-      console.log('fullPath', fullPath)
+      // console.log('bucket', bucket)
+      // console.log('fullPath', fullPath)
       let downloadURL = await firebase.storage().ref(x.state.imageRef).child(filename).getDownloadURL();
-      console.log('downloadURL', downloadURL)
+      // console.log('downloadURL', downloadURL)
 
       let { uid, email, displayName } = await firebase.auth().currentUser;
 
@@ -112,7 +112,7 @@ export default class Home extends Component {
       console.log('newPhoto', newPhoto);
 
       let photoAdded = await firebase.firestore().collection('photos').add(newPhoto);
-      console.log('photoAdded', photoAdded);
+      // console.log('photoAdded', photoAdded);
     }
 
     catch(err) {
@@ -126,55 +126,55 @@ export default class Home extends Component {
   render() {
 
     const allImages = this.state.allPhotos.map(photo => {
-
-      if (photo.similarImages) {
-        this.dopples = photo.similarImages.map(similarPhoto => {
-
-          const styles = {
-            backgroundImage: "url(" + similarPhoto.url + ")",
-          }
-
-          return (
-            <div
-              onClick={() => this.setState({ showModal: true, currentPhoto: similarPhoto.url })}
-              style={styles}
-              className="main-photo card-1 card"
-              key={similarPhoto.url}
-              xs={4} >
-            </div>
-
-          );
-        });
-      } else {
-
-        this.dopples =
-        <div className="scrolling-wrapper">
-          <div className="main-photo card-1 card loading-card" xs={4}>
-            <ScaleLoader
-              color={'#000'}
-              loading={true}
-              />
-          </div>
-          <div className="main-photo card-1 card loading-card" xs={4}>
-            <ScaleLoader
-              color={'#000'}
-              loading={true}
-              />
-          </div>
-          <div className="main-photo card-1 card loading-card" xs={4}>
-            <ScaleLoader
-              color={'#000'}
-              loading={true}
-              />
-          </div>
-          <div className="main-photo card-1 card loading-card" xs={4}>
-            <ScaleLoader
-              color={'#000'}
-              loading={true}
-              />
-          </div>
-        </div>
-      }
+      this.dopples = photo.text
+      // if (photo.similarImages) {
+      //   this.dopples = photo.similarImages.map(similarPhoto => {
+      //
+      //     const styles = {
+      //       backgroundImage: "url(" + similarPhoto.url + ")",
+      //     }
+      //
+      //     return (
+      //       <div
+      //         onClick={() => this.setState({ showModal: true, currentPhoto: similarPhoto.url })}
+      //         style={styles}
+      //         className="main-photo card-1 card"
+      //         key={similarPhoto.url}
+      //         xs={4} >
+      //       </div>
+      //
+      //     );
+        // });
+      // } else {
+      //
+      //   this.dopples =
+      //   <div className="scrolling-wrapper">
+      //     <div className="main-photo card-1 card loading-card" xs={4}>
+      //       <ScaleLoader
+      //         color={'#000'}
+      //         loading={true}
+      //         />
+      //     </div>
+      //     <div className="main-photo card-1 card loading-card" xs={4}>
+      //       <ScaleLoader
+      //         color={'#000'}
+      //         loading={true}
+      //         />
+      //     </div>
+      //     <div className="main-photo card-1 card loading-card" xs={4}>
+      //       <ScaleLoader
+      //         color={'#000'}
+      //         loading={true}
+      //         />
+      //     </div>
+      //     <div className="main-photo card-1 card loading-card" xs={4}>
+      //       <ScaleLoader
+      //         color={'#000'}
+      //         loading={true}
+      //         />
+      //     </div>
+      //   </div>
+      // }
 
 
       return (
@@ -209,8 +209,8 @@ export default class Home extends Component {
     return (
       <div>
 
-        <h1>My Photos Feed</h1>
-        <h3>Want to know who Google thinks you look like? Upload a photo by clicking the middle button at the bottom to find out...</h3>
+        <h1>My Recipes Feed</h1>
+        <h3>Upload an image of a recipe!...</h3>
         {this.state.isMobile ? <h3>For selfies - rotate to landscape</h3>: ""}
 
         {allImages}
